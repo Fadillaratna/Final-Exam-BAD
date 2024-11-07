@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package BioskopSoal1.Staff;
+package BioskopSoal1.User;
 
+import BioskopSoal1.Staff.*;
 import BioskopSoal1.Connection.DatabaseConnection;
 import BioskopSoal1.LoginForm;
 import BioskopSoal1.Util.UserSession;
@@ -18,20 +19,23 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
  * @author ACER
  */
-public class PenjualanTiket extends javax.swing.JFrame {
+public class HistoriPembelian extends javax.swing.JFrame {
 
-    public PenjualanTiket() {
+    public HistoriPembelian() {
 
         if (isSessionValid()) {
-            setTitle("CinemaQ | Penjualan Tiket");
+            setTitle("CinemaQ | Jadwal Tayang");
 
             initComponents();
             showData();
+
             setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             this.addWindowListener(new WindowAdapter() {
                 @Override
@@ -74,7 +78,6 @@ public class PenjualanTiket extends javax.swing.JFrame {
                 String query = """
                    SELECT 
                         s.sale_date AS tgl_pembelian,
-                        u.name as nama_cust,
                         f.title AS judul_film,
                         f.duration AS durasi,
                         fs.schedule_date AS jadwal_tayang,
@@ -93,8 +96,8 @@ public class PenjualanTiket extends javax.swing.JFrame {
                         movies f ON fs.movie_id = f.id
                     JOIN 
                         theater t ON fs.theater_id = t.id
-                    JOIN
-                        users u on u.ID = s.customer_id
+                    WHERE 
+                        s.customer_id = ?
                     GROUP BY 
                         s.id, f.title, fs.schedule_date, t.name
                     ORDER BY 
@@ -102,12 +105,12 @@ public class PenjualanTiket extends javax.swing.JFrame {
                 """;
 
                 PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, UserSession.getId());
                 ResultSet rs = stmt.executeQuery();
 
                 DefaultTableModel tblModel = new DefaultTableModel();
                 tblModel.addColumn("No.");
                 tblModel.addColumn("Tanggal Pembelian");
-                tblModel.addColumn("Nama Customer");
                 tblModel.addColumn("Judul Film");
                 tblModel.addColumn("Durasi");
                 tblModel.addColumn("Theater");
@@ -139,7 +142,6 @@ public class PenjualanTiket extends javax.swing.JFrame {
                     Object[] data = new Object[]{
                         no,
                         tanggalBeli,
-                        rs.getString("nama_cust"),
                         rs.getString("judul_film"),
                         rs.getString("durasi") + " menit",
                         rs.getString("gedung_theater"),
@@ -171,27 +173,26 @@ public class PenjualanTiket extends javax.swing.JFrame {
         tblHistori = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuDashboard = new javax.swing.JMenu();
-        menuTheater = new javax.swing.JMenu();
-        menuFilm = new javax.swing.JMenu();
         menuJadwalTayang = new javax.swing.JMenu();
-        menuPenjualanTiket = new javax.swing.JMenu();
+        menuHistori = new javax.swing.JMenu();
         menuLogout = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1244, 700));
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Penjualan Tiket");
+        jLabel1.setText("Histori Pembelian");
 
         tblHistori.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Tanggal Pembelian", "Nama Customer", "Judul Film", "Durasi", "Theater", "Jadwal Tayang", "Nomor Kursi", "Total Harga"
+                "No", "Tanggal Pembelian", "Judul Film", "Durasi", "Theater", "Jadwal Tayang", "Nomor Kursi", "Total Harga"
             }
         ));
         jScrollPane1.setViewportView(tblHistori);
@@ -204,23 +205,7 @@ public class PenjualanTiket extends javax.swing.JFrame {
         });
         jMenuBar1.add(menuDashboard);
 
-        menuTheater.setText("Theater");
-        menuTheater.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menuTheaterMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(menuTheater);
-
-        menuFilm.setText("Film");
-        menuFilm.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menuFilmMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(menuFilm);
-
-        menuJadwalTayang.setText("Jadwal Tayang");
+        menuJadwalTayang.setText("Film Hari Ini");
         menuJadwalTayang.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menuJadwalTayangMouseClicked(evt);
@@ -228,13 +213,13 @@ public class PenjualanTiket extends javax.swing.JFrame {
         });
         jMenuBar1.add(menuJadwalTayang);
 
-        menuPenjualanTiket.setText("Penjualan Tiket");
-        menuPenjualanTiket.addMouseListener(new java.awt.event.MouseAdapter() {
+        menuHistori.setText("Histori Pembelian");
+        menuHistori.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menuPenjualanTiketMouseClicked(evt);
+                menuHistoriMouseClicked(evt);
             }
         });
-        jMenuBar1.add(menuPenjualanTiket);
+        jMenuBar1.add(menuHistori);
 
         menuLogout.setText("Logout");
         menuLogout.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -251,20 +236,22 @@ public class PenjualanTiket extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1124, Short.MAX_VALUE)
-                    .addComponent(jLabel1))
-                .addGap(23, 23, 23))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1180, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(36, 36, 36))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(61, 61, 61)
                 .addComponent(jLabel1)
-                .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addGap(39, 39, 39)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(165, Short.MAX_VALUE))
         );
 
         pack();
@@ -282,29 +269,19 @@ public class PenjualanTiket extends javax.swing.JFrame {
     }//GEN-LAST:event_menuLogoutMouseClicked
 
     private void menuDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuDashboardMouseClicked
-        new StaffDashboard().setVisible(true);
+        new UserDashboard().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menuDashboardMouseClicked
 
-    private void menuFilmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuFilmMouseClicked
-        new ListFilm().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_menuFilmMouseClicked
-
     private void menuJadwalTayangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuJadwalTayangMouseClicked
-        new ListJadwalTayang().setVisible(true);
+        new ListJadwalTayangForUser().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menuJadwalTayangMouseClicked
 
-    private void menuPenjualanTiketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuPenjualanTiketMouseClicked
-        new PenjualanTiket().setVisible(true);
+    private void menuHistoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuHistoriMouseClicked
+        new HistoriPembelian().setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_menuPenjualanTiketMouseClicked
-
-    private void menuTheaterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuTheaterMouseClicked
-        new ListTheater().setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_menuTheaterMouseClicked
+    }//GEN-LAST:event_menuHistoriMouseClicked
 
     /**
      * @param args the command line arguments
@@ -323,14 +300,26 @@ public class PenjualanTiket extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PenjualanTiket.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoriPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PenjualanTiket.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoriPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PenjualanTiket.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoriPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PenjualanTiket.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoriPembelian.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -339,7 +328,7 @@ public class PenjualanTiket extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PenjualanTiket().setVisible(true);
+                new HistoriPembelian().setVisible(true);
             }
         });
     }
@@ -349,11 +338,9 @@ public class PenjualanTiket extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenu menuDashboard;
-    private javax.swing.JMenu menuFilm;
+    private javax.swing.JMenu menuHistori;
     private javax.swing.JMenu menuJadwalTayang;
     private javax.swing.JMenu menuLogout;
-    private javax.swing.JMenu menuPenjualanTiket;
-    private javax.swing.JMenu menuTheater;
     private javax.swing.JTable tblHistori;
     // End of variables declaration//GEN-END:variables
 }

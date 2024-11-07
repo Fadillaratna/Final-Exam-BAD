@@ -170,7 +170,7 @@ public class UserDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_menuJadwalTayangMouseClicked
 
     private void menuPenjualanTiketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuPenjualanTiketMouseClicked
-//        new PenjualanTiket().setVisible(true);
+        new HistoriPembelian().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menuPenjualanTiketMouseClicked
 

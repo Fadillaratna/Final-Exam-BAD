@@ -389,7 +389,6 @@ public class ListFilm extends javax.swing.JFrame {
         int selectedRow = tblFilm.getSelectedRow();
         if (selectedRow != -1) {
             selectedID = Integer.valueOf(tblFilm.getValueAt(selectedRow, 0).toString());
-            System.out.println("ID yang dipilih: " + selectedID);
         }
     }//GEN-LAST:event_tblFilmMouseClicked
 

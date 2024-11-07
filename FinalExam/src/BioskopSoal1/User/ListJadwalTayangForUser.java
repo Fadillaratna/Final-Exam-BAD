@@ -425,7 +425,7 @@ public class ListJadwalTayangForUser extends javax.swing.JFrame {
     }//GEN-LAST:event_menuJadwalTayangMouseClicked
 
     private void menuHistoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuHistoriMouseClicked
-//        new PenjualanTiket().setVisible(true);
+        new HistoriPembelian().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menuHistoriMouseClicked
 
@@ -448,7 +448,6 @@ public class ListJadwalTayangForUser extends javax.swing.JFrame {
         int selectedRow = tblJadwal.getSelectedRow();
         if (selectedRow != -1) {
             selectedID = Integer.valueOf(tblJadwal.getValueAt(selectedRow, 0).toString());
-            System.out.println("ID yang dipilih: " + selectedID);
         }
     }//GEN-LAST:event_tblJadwalMouseClicked
 
