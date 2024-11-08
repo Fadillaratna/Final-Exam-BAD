@@ -70,7 +70,7 @@ public class UserDashboard extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         menuDashboard = new javax.swing.JMenu();
         menuJadwalTayang = new javax.swing.JMenu();
-        menuPenjualanTiket = new javax.swing.JMenu();
+        menuHistori = new javax.swing.JMenu();
         menuLogout = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -101,13 +101,13 @@ public class UserDashboard extends javax.swing.JFrame {
         });
         jMenuBar1.add(menuJadwalTayang);
 
-        menuPenjualanTiket.setText("Histori Pembelian");
-        menuPenjualanTiket.addMouseListener(new java.awt.event.MouseAdapter() {
+        menuHistori.setText("Histori Pembelian");
+        menuHistori.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menuPenjualanTiketMouseClicked(evt);
+                menuHistoriMouseClicked(evt);
             }
         });
-        jMenuBar1.add(menuPenjualanTiket);
+        jMenuBar1.add(menuHistori);
 
         menuLogout.setText("Logout");
         menuLogout.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -169,10 +169,10 @@ public class UserDashboard extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_menuJadwalTayangMouseClicked
 
-    private void menuPenjualanTiketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuPenjualanTiketMouseClicked
+    private void menuHistoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuHistoriMouseClicked
         new HistoriPembelian().setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_menuPenjualanTiketMouseClicked
+    }//GEN-LAST:event_menuHistoriMouseClicked
 
     /**
      * @param args the command line arguments
@@ -217,9 +217,9 @@ public class UserDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu menuDashboard;
+    private javax.swing.JMenu menuHistori;
     private javax.swing.JMenu menuJadwalTayang;
     private javax.swing.JMenu menuLogout;
-    private javax.swing.JMenu menuPenjualanTiket;
     private javax.swing.JLabel txtName;
     // End of variables declaration//GEN-END:variables
 }

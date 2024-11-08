@@ -552,10 +552,6 @@ public class PembelianTiket extends javax.swing.JFrame {
                     }
                 }
             }
-//            else {
-//                component.setBackground(Color.CYAN); 
-//            }
-
             return component;
         }
     }
